@@ -1,8 +1,11 @@
 'use strict';
 
 var React = require('react-native');
-var {
-	StyleSheet,
+
+// import SearchResults class to display API data
+var SearchResults = require('./SearchResults');
+
+var { StyleSheet,
 	Text,
 	TextInput,
 	View,
@@ -115,9 +118,15 @@ class SearchPage extends Component {
 		_handleResponse(response) {
 			this.setState({ isLoading: false, message: '' }); // clears "isLoading"
 			if (response.application_response_code.substr(0, 1) === '1') {
-				console.log('Properties found: ' + response.listings.length);
 				// logs the number of properties found upon successful query
-				this.setState({ message: 'Properties found: ' + response.listings.length});
+				console.log('Properties found: ' + response.listings.length);
+				
+				// push method ensures search results are pushed to navigation stack
+				this.props.navigator.push({
+					title: 'Results',
+					component: SearchResults,
+					passProps: {listings: response.listings}
+				});
 			} else
 				this.setState({ message: 'Location not recognized; please try again.'});
 		} // end method
@@ -152,15 +161,12 @@ class SearchPage extends Component {
 						onChange={this.onSearchTextChanged.bind(this)} // call method
 						placeholder='Search via name or postcode' />
 
-					<TouchableHighlight style={styles.button}
-						underlayColor='#99d9f4'
-						onPress={this.onSearchPressed.bind(this)}>
+					<TouchableHighlight style={styles.button} underlayColor='#99d9f4' onPress={this.onSearchPressed.bind(this)}>
 						<Text style={styles.buttonText}>Go</Text>
 					</TouchableHighlight>
 				</View>
 
-				<TouchableHighlight style={styles.button}
-					underlayColor='#99d9f4'>
+				<TouchableHighlight style={styles.button} underlayColor='#99d9f4'>
 					<Text style={styles.buttonText}>Location</Text>
 				</TouchableHighlight>
 				
