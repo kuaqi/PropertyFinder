@@ -1,7 +1,17 @@
+// This component list the results of the API request in a list view
+
 'use strict';
 
 var React = require('react-native');	// include react-native module
 var { StyleSheet, Image, View, TouchableHighlight, ListView, Text, Component } = React;
+var styles = StyleSheet.create({
+	thumb: { width: 80, height: 80, marginRight: 10 },
+	textContainer: { flex: 1 },
+	separator: { height: 1, backgroundColor: '#dddddd' },
+	price: { fontSize: 25, fontWeight: 'bold', color: '#48BBEC' },
+	title: { fontSize: 20, color: '#656565' },
+	rowContainer: { flexDirection: 'row', padding: 10 } 
+}); // styles for each row
 
 class SearchResults extends Component {
 	constructor(props) {
@@ -16,10 +26,20 @@ class SearchResults extends Component {
 	} // end constructor
 
 	renderRow(rowData, sectionID, rowID) {
+		var price = rowData.price_formatted.split(' ')[0];
+
 		return (
-			<TouchableHighlight underlayColor='#dddddd'>
+			// arrow function used to capture the guid for the row
+			<TouchableHighlight underlayColor='#dddddd' onPress={() => this.rowPressed(rowData.guid)}>
 				<View>
-					<Text>{rowData.title}</Text>
+					<View style={styles.rowContainer}>
+						<Image style={styles.thumb} source={{ uri: rowData.img_url }} />
+						<View style={styles.textContainer}>
+							<Text style={styles.price}>£{price}</Text>
+							<Text style={styles.title}numberOfLines={1}>{rowData.title}</Text>
+						</View>
+					</View>
+					<View style={styles.separator}/>
 				</View>
 			</TouchableHighlight>
 		);
@@ -30,6 +50,12 @@ class SearchResults extends Component {
 			<ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)}/>
 		);
 	} // end render
+
+	// locates the property that was tapped by the user
+	rowPressed(propertyGuid) {
+		var property = this.props.listings.filter(prop => prop.guid === propertyGuid)[0];
+	} // end method
+
 
 } // end class
 
