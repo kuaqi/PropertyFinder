@@ -3,6 +3,7 @@
 'use strict';
 
 var React = require('react-native');	// include react-native module
+var PropertyDetail = require('./PropertyDetail');
 var { StyleSheet, Image, View, TouchableHighlight, ListView, Text, Component } = React;
 var styles = StyleSheet.create({
 	thumb: { width: 80, height: 80, marginRight: 10 },
@@ -54,6 +55,12 @@ class SearchResults extends Component {
 	// locates the property that was tapped by the user
 	rowPressed(propertyGuid) {
 		var property = this.props.listings.filter(prop => prop.guid === propertyGuid)[0];
+	
+		this.props.navigator.push({
+			title: "Property",
+			component: PropertyDetail,
+			passProps: { property: property }
+		});
 	} // end method
 
 
