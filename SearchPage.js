@@ -1,3 +1,5 @@
+// The main component and the entry point of the application
+
 'use strict';
 
 var React = require('react-native');
@@ -136,6 +138,22 @@ class SearchPage extends Component {
 			this._executeQuery(query);	// "_" indicating this should be private
 		} // end method
 
+		// Location-based search
+		// Access simulator menu and enter desired latitude and longitude to debug
+		onLocationPressed() {
+			// attempt to retrieve current position with Web API
+			navigator.geolocation.getCurrentPosition(
+				location => { // sends online query if position is obtained
+					var search = location.coords.latitude + ',' + location.coords.longitude;
+					this.setState({ searchString: search });
+					var query = urlForQueryAndPage('centre_point', search, 1);
+					this._executeQuery(query);
+				},
+				error => { // otherwise display error
+					this.setState({ message: 'Error occurred obtaining location: ' + error });
+				});
+		} // end method
+
 	render() {
 		// console.log('SearchPage.render');
 		var spinner = this.state.isLoading ?
@@ -166,7 +184,7 @@ class SearchPage extends Component {
 					</TouchableHighlight>
 				</View>
 
-				<TouchableHighlight style={styles.button} underlayColor='#99d9f4'>
+				<TouchableHighlight style={styles.button} underlayColor='#99d9f4' onPress={this.onLocationPressed.bind(this)}>
 					<Text style={styles.buttonText}>Location</Text>
 				</TouchableHighlight>
 				
